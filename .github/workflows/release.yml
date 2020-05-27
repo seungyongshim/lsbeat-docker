@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+env:
+  BEAT_VERSION: v0.3.2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - id: get_version
+      uses: seungyongshim/get-version-action@v1.3
+    - id: get_release
+      uses: bruceadams/get-release@v1.2.0              
+    - uses: actions/checkout@v2
+    - name: Download lsbeat
+      run: wget "https://github.com/seungyongshim/lsbeat/releases/download/${BEAT_VERSION}/lsbeat"
+    - name: Build&Push the Docker image
+      run: |
+        env
+        docker login -u ${{ secrets.DOCKER_HUB_ID }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker build . -t mirerosystemkr/lsbeat:${GITHUB_VERSION}
+        docker push mirerosystemkr/lsbeat:${GITHUB_VERSION}
+      env:
+        GITHUB_VERSION: ${{ steps.get_version.outputs.version }}

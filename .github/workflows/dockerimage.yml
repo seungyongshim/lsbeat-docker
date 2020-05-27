@@ -1,0 +1,19 @@
+name: CI
+
+on: [push, pull_request]
+env:
+  BEAT_VERSION: v0.3.2
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+        wget "https://github.com/seungyongshim/lsbeat/releases/download/${BEAT_VERSION}/lsbeat"
+        docker login -u ${{ secrets.DOCKER_HUB_ID }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker build . -t mirerosystemkr/lsbeat:${GITHUB_SHA::8}
+        docker push mirerosystemkr/lsbeat:${GITHUB_SHA::8}
+        
