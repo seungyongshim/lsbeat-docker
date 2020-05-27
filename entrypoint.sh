@@ -1,2 +1,2 @@
 #! /bin/sh
-/lsbeat -e --strict.perms=false
+/lsbeat --strict.perms=false -c /lsbeat.yml -e 
